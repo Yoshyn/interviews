@@ -8,7 +8,7 @@ require_relative 'seeds'
 
 if ENV["PRODUCTION"].present?
   File.open("data/output.json","w") do |f|
-    f.write(Rental.export_as_json)
+    f.write(Rental.scoping_as_json)
   end
 else
   require "minitest/autorun"
@@ -31,7 +31,7 @@ else
     end
 
     def test_expected_output
-      assert_equal EXPECTED_JSON, Rental.scope_as_json
+      assert_equal EXPECTED_JSON, Rental.scoping_as_json
     end
   end
 end

@@ -5,7 +5,7 @@ module ActiveRecord::JsonableScope
   extend ActiveSupport::Concern
   class_methods do
     def jsonable_scope(options = {})
-      define_singleton_method(:scope_as_json) do |opts = {}| 
+      define_singleton_method(:scoping_as_json) do |opts = {}| 
         records = (current_scope || all).map do |record|
           record.as_json(opts.presence || options)
         end
