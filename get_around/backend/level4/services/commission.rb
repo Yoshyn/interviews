@@ -16,20 +16,20 @@ class Commission
     @day_count * 100 # 1 euro in cents
   end
 
-  def drivy_fee
+  def get_around_fee
     ( commission - insurance_fee - assistance_fee ).to_i
   end
 
   def as_json
-    { 
+    {
       "insurance_fee" => insurance_fee,
       "assistance_fee" => assistance_fee,
-      "drivy_fee" => drivy_fee
+      "get_around_fee" => get_around_fee
     }
   end
 
   protected
   def commission
     @amount * TOTAL_PERCENT
-  end  
+  end
 end

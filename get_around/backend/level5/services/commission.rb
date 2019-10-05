@@ -16,7 +16,7 @@ class Commission
     @day_count * 100 # 1 euro in cents
   end
 
-  def drivy_fee
+  def get_around_fee
     ( total_fee - insurance_fee - assistance_fee ).to_i
   end
 

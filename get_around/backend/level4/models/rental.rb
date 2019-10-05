@@ -24,7 +24,7 @@ class Rental < ActiveRecord::Base
   end
 
   def actions
-    %w(driver owner insurance assistance drivy).map do |actor|
+    %w(driver owner insurance assistance get_around).map do |actor|
       "Actors::#{actor.classify}".constantize.new(self).as_json
     end
   end

@@ -15,7 +15,7 @@ module Actors
 
     def as_json
       {
-        "who" => self.class.name.demodulize.downcase,
+        "who" => self.class.name.demodulize.underscore,
         "type" => type,
         "amount" => amount
       }
@@ -42,8 +42,8 @@ module Actors
     def amount; @rental.commission["assistance_fee"]; end
   end
 
-  class Drivy < Actor
+  class GetAround < Actor
     def type; "credit"; end
-    def amount; @rental.commission["drivy_fee"]; end
+    def amount; @rental.commission["get_around_fee"]; end
   end
 end

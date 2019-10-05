@@ -24,7 +24,7 @@
           "amount": 100
         },
         {
-          "who": "drivy",
+          "who": "get_around",
           "type": "credit",
           "amount": 350
         }
@@ -54,7 +54,7 @@
           "amount": 200
         },
         {
-          "who": "drivy",
+          "who": "get_around",
           "type": "credit",
           "amount": 820
         }
@@ -84,7 +84,7 @@
           "amount": 1200
         },
         {
-          "who": "drivy",
+          "who": "get_around",
           "type": "credit",
           "amount": 2970
         }
