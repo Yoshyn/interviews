@@ -17,6 +17,10 @@ module ActiveRecord::JsonableScope
         end
         { table_name => records }
       end
+
+      define_singleton_method(:scoping_to_json) do |opts = {}|
+        scoping_as_json(opts).to_json
+      end
     end
   end
 end
