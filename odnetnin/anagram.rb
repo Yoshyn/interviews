@@ -55,7 +55,7 @@ def sort_anagram_optimized(dictionary)
   result
 end
 
-class BugTest < Minitest::Test
+class AnagramTest < Minitest::Test
 
   URI         = URI('http://www.pallier.org/extra/liste.de.mots.francais.frgut.txt')
   DICTIONARY  = Net::HTTP.get(URI).force_encoding('ISO-8859-1').encode('UTF-8').split("\n").map(&:chomp)
