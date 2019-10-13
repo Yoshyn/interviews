@@ -86,11 +86,39 @@ class Discount
 end
 
 class DiscountTest < Minitest::Test
-  def test_empty;             assert_equal(Discount.for([]),                0.0);   end
-  def test_one;               assert_equal(Discount.for([1]),               8.0);   end
-  def test_twice_same;        assert_equal(Discount.for([1,1]),             16.0);  end
-  def test_two;               assert_equal(Discount.for([1,2]),             15.2);  end
-  def test_three;             assert_equal(Discount.for([1,2,3]),           21.6);  end
-  def test_four_one_is_twice; assert_equal(Discount.for([1,1,1,1,1,2,2]),   54.4);  end
-  def test_eight_with_five;   assert_equal(Discount.for([1,1,2,2,3,3,4,5]), 51.2);  end
+  def test_basics
+    assert_equal(0, Discount.for([]))
+    assert_equal(8, Discount.for([0]))
+    assert_equal(8, Discount.for([1]))
+    assert_equal(8, Discount.for([2]))
+    assert_equal(8, Discount.for([3]))
+    assert_equal(8, Discount.for([4]))
+    assert_equal(8 * 2, Discount.for([0, 0]))
+    assert_equal(8 * 3, Discount.for([1, 1, 1]))
+  end
+
+  def test_simple_discounts
+    assert_equal(8 * 2 * 0.95, Discount.for([0, 1]))
+    assert_equal(8 * 3 * 0.9, Discount.for([0, 2, 4]))
+    assert_equal(8 * 4 * 0.8, Discount.for([0, 1, 2, 4]))
+    assert_equal(8 * 5 * 0.75, Discount.for([0, 1, 2, 3, 4]))
+  end
+
+  def test_combinated_discounts
+    assert_equal(8 + (8 * 2 * 0.95), Discount.for([0, 0, 1]))
+    assert_equal((8 * 2 * 0.95) * 2, Discount.for([0, 0, 1, 1]))
+    assert_equal((8 * 4 * 0.8) + (8 * 2 * 0.95), Discount.for([0, 0, 1, 2, 2, 3]))
+    assert_equal(8 + (8 * 5 * 0.75), Discount.for([0, 1, 1, 2, 3, 4]))
+  end
+
+  def test_edge_cases
+    assert_equal(2 * (8 * 4 * 0.8), Discount.for([0, 0, 1, 1, 2, 2, 3, 4]))
+    # With the current algorithm, this test is extremly slow :/
+    assert_equal(3 * (8 * 5 * 0.75) + 2 * (8 * 4 * 0.8),
+      Discount.for([0, 0, 0, 0, 0,
+             1, 1, 1, 1, 1,
+             2, 2, 2, 2,
+             3, 3, 3, 3, 3,
+             4, 4, 4, 4]))
+  end
 end
