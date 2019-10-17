@@ -57,9 +57,7 @@ end
 
 class AnagramTest < Minitest::Test
 
-  URI         = URI('http://www.pallier.org/extra/liste.de.mots.francais.frgut.txt')
-  DICTIONARY  = Net::HTTP.get(URI).force_encoding('ISO-8859-1').encode('UTF-8').split("\n").map(&:chomp)
-
+  DICTIONARY  = File.open("data/dictionary.fr.txt").readlines.map(&:chomp)
 
   [:sort_anagram_initial_key_is_string, :sort_anagram_initial_key_is_number, :sort_anagram_optimized].each do |method|
 
