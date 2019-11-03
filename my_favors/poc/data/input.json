@@ -1,0 +1,106 @@
+{
+  "prestations" : [
+    { "reference" : "man_haircut", "duration" : 30 },
+    { "reference" : "woman_shampoo", "duration" : 15 },
+    { "reference" : "woman_haircut", "duration" : 30 },
+    { "reference" : "woman_color", "duration" : 45 },
+    { "reference" : "woman_brushing", "duration" : 40 }
+  ],
+  "pros" : [
+    {
+      "name" : "Nathalie",
+      "address" : "22 Av de Friedland 75008 Paris",
+      "lat" : 48.874853,
+      "lng" : 2.300370,
+      "max_kilometers" : 5,
+      "prestations" : ["woman_shampoo", "woman_haircut", "woman_brushing"],
+      "opening_hours" : [
+        { "day": "monday", "starts_at" : "8:00", "ends_at" : "17:00" },
+        { "day": "thursday", "starts_at" : "8:00", "ends_at" : "12:00" },
+        { "day": "friday", "starts_at" : "8:00", "ends_at" : "17:00" }
+      ],
+      "appointments" : [
+        { "starts_at" : "2019-08-27T09:00:00+02:00", "ends_at" : "2019-08-27T12:00:00+02:00" },
+        { "starts_at" : "2019-08-30T16:00:00+02:00", "ends_at" : "2019-08-30T16:30:00+02:00" }
+      ]
+    },
+    {
+      "name" : "Sophie",
+      "address": "127 Avenue Pablo Picasso, 92000 Nanterre",
+      "lat" : 48.888353,
+      "lng" : 2.226596,
+      "max_kilometers" : 7,
+      "prestations" : ["man_haircut", "woman_shampoo", "woman_haircut", "woman_color"],
+      "opening_hours" : [
+        { "day": "monday", "starts_at" : "9:00", "ends_at" : "18:00" },
+        { "day": "tuesday", "starts_at" : "9:00", "ends_at" : "18:00" },
+        { "day": "wednesday", "starts_at" : "9:00", "ends_at" : "12:30" },
+        { "day": "thursday", "starts_at" : "9:00", "ends_at" : "18:00" },
+        { "day": "friday", "starts_at" : "9:00", "ends_at" : "18:00" }
+      ],
+      "appointments" : [
+        { "starts_at" : "2019-08-28T14:00:00+02:00", "ends_at" : "2019-08-28T17:00:00+02:00" },
+        { "starts_at" : "2019-08-29T08:00:00+02:00", "ends_at" : "2019-08-29T10:00:00+02:00" }
+      ]
+    },
+    {
+      "name" : "Franck",
+      "address" : "27 Rue d'Estienne d'Orves, 92700 Colombes",
+      "lat" : 48.921277,
+      "lng" : 2.248160,
+      "max_kilometers" : 9,
+      "prestations" : ["man_haircut", "woman_shampoo", "woman_haircut"],
+      "opening_hours" : [
+        { "day": "tuesday", "starts_at" : "8:00", "ends_at" : "18:00" },
+        { "day": "wednesday", "starts_at" : "8:00", "ends_at" : "18:00" },
+        { "day": "thursday", "starts_at" : "14:00", "ends_at" : "18:00" },
+        { "day": "friday", "starts_at" : "9:00", "ends_at" : "18:00" },
+        { "day": "saturday", "starts_at" : "9:00", "ends_at" : "13:00" }
+      ],
+      "appointments" : [
+        // Store le booking_id. Si null => c'est une resevation externe
+        { "starts_at" : "2019-08-28T13:00:00+02:00", "ends_at" : "2019-08-28T15:00:00+02:00" },
+        { "starts_at" : "2019-08-28T10:00:00+02:00", "ends_at" : "2019-08-28T10:30:00+02:00" },
+        { "starts_at" : "2019-08-29T13:00:00+02:00", "ends_at" : "2019-08-29T15:00:00+02:00" }
+      ]
+    }
+  ],
+  "bookings" : [
+    {
+      "email": "pierre@yopmail.com",
+      "name" : "Pierre Legrand",
+      "starts_at" : "2019-08-29T09:30:00+02:00",
+      "address" : "73 Avenue de Wagram, 75017 Paris",
+      "lat": 48.879240,
+      "lng": 2.298816,
+      "prestations" : ["man_haircut"]
+    },
+    {
+      "email": "pierre@yopmail.com",
+      "name" : "Pierre Legrand",
+      "starts_at" : "2019-08-28T09:30:00+02:00",
+      "address" : "73 Avenue de Wagram, 75017 Paris",
+      "lat": 48.879240,
+      "lng": 2.298816,
+      "prestations" : ["woman_color"]
+    },
+    {
+      "email": "emilie@yopmail.com",
+      "name" : "Émilie Fouche",
+      "starts_at" : "2019-08-27T14:00:00+02:00",
+      "address" : "2 Rue du Professeur Calmette, 92230 Gennevilliers",
+      "lat": 48.922699,
+      "lng": 2.295130,
+      "prestations" : ["woman_haircut", "woman_brushing"]
+    },
+    {
+      "email": "caroline@yopmail.com",
+      "name" : "Caroline Dujean",
+      "starts_at" : "2019-08-28T16:00:00+02:00", // cwday
+      "address" : "4 Rue Hoche, 92130 Issy-les-Moulineaux",
+      "lat": 48.825711,
+      "lng": 2.273804,
+      "prestations" : ["woman_color", "woman_shampoo"]
+    }
+  ]
+}
