@@ -71,4 +71,12 @@ class SeedsTest < Minitest::Test
     assert_equal ["Nathalie"], Pro.open(Time.parse("1970-01-05 08:00:00"), 15 * 60).pluck(:name).sort
     assert_equal ["Nathalie", "Sophie"], Pro.open(Time.parse("1970-01-05 09:00:00"), 15 * 60).pluck(:name).sort
   end
+
+  def test_pros_for_scope
+    assert_equal ["Franck", "Sophie"], Pro.for("man_haircut").pluck(:name).sort
+    assert_equal ["Franck", "Nathalie", "Sophie"], Pro.for("woman_shampoo").pluck(:name).sort
+    assert_equal ["Sophie"], Pro.for("woman_color").pluck(:name).sort
+    assert_equal ["Franck", "Sophie"], Pro.for("man_haircut", "woman_shampoo").pluck(:name).sort
+    assert_equal ["Nathalie"], Pro.for("woman_shampoo", "woman_haircut", "woman_brushing").pluck(:name).sort
+  end
 end
