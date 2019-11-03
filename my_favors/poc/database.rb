@@ -49,4 +49,32 @@ ActiveRecord::Schema.define do
   end
 end
 
+module GeoForSQLite
+  RAD_PER_DEG = Math::PI / 180
+  RM = 6371 # Earth radius in kmeters
+
+  def self.crow_flies_km(lat1, lon1, lat2, lon2)
+    lat1_rad, lat2_rad = lat1 * RAD_PER_DEG, lat2 * RAD_PER_DEG
+    lon1_rad, lon2_rad = lon1 * RAD_PER_DEG, lon2 * RAD_PER_DEG
+
+    a = Math.sin((lat2_rad - lat1_rad) / 2) ** 2 + Math.cos(lat1_rad) * Math.cos(lat2_rad) * Math.sin((lon2_rad - lon1_rad) / 2) ** 2
+    c = 2 * Math::atan2(Math::sqrt(a), Math::sqrt(1 - a))
+
+    RM * c # Delta in meters
+  end
+
+  def self.load!(sqlite_database)
+    %w(cos acos sin).each do |math_method|
+      sqlite_database.create_function math_method, 1 do |func, *args|
+        func.result = Math.__send__(math_method, *args)
+      end
+    end
+    sqlite_database.create_function 'crow_flies_km', 4 do |func, *args|
+      func.result = crow_flies_km(*args)
+    end
+  end
+end
+
+GeoForSQLite.load!(ActiveRecord::Base.connection.raw_connection)
+
 Dir["models/*.rb"].each { |model| require_relative model }

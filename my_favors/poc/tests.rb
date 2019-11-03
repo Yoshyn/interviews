@@ -91,4 +91,11 @@ class SeedsTest < Minitest::Test
     assert_equal ["Franck", "Sophie"], Pro.available(Time.parse("2019-08-30 16:00:00"), 15 * 60).pluck(:name).sort
     assert_equal ["Franck", "Nathalie", "Sophie"], Pro.available(Time.parse("2019-08-30 16:40:00"), 15 * 60).pluck(:name).sort
   end
+
+  def test_crow_flies_km_sql_result
+    paris_lat, paris_lng = 48.8566, 2.3522
+    rennes_lat, rennes_lng = 48.1135, -1.6757
+    result = ActiveRecord::Base.connection.execute("SELECT CROW_FLIES_KM(#{paris_lat}, #{paris_lng}, #{rennes_lat}, #{rennes_lng}) AS CROW_FLIES_KM;")
+    assert_equal(308, result[0]["CROW_FLIES_KM"].to_i)
+  end
 end
