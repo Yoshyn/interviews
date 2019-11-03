@@ -7,7 +7,7 @@ class HourType < ActiveRecord::Type::Integer
   def cast(value)
     if value.kind_of?(String)
       super(Time.parse(value).to_i % SECOND_IN_DAY)
-    elsif !value.kind_of?(Time)
+    elsif value.kind_of?(Time)
       super(value.to_i % SECOND_IN_DAY)
     else
       super

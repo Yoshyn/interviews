@@ -48,4 +48,27 @@ class SeedsTest < Minitest::Test
       end
     end
   end
+
+  def test_opening_hours_for_days_scope
+    assert_equal 2, OpeningHour.for_days("monday").count
+    assert_equal 2, OpeningHour.for_days("tuesday").count
+    assert_equal 2, OpeningHour.for_days("wednesday").count
+    assert_equal 3, OpeningHour.for_days("thursday").count
+    assert_equal 3, OpeningHour.for_days("friday").count
+    assert_equal 1, OpeningHour.for_days("saturday").count
+    assert_equal 0, OpeningHour.for_days("sunday").count
+    assert_equal 4, OpeningHour.for_days("monday", "tuesday").count
+    assert_equal 7, OpeningHour.for_days("monday", "tuesday", "friday").count
+  end
+
+  def test_opening_hours_match_scope
+    assert_equal 1, OpeningHour.match(Time.parse("1970-01-05 08:00:00"), 15 * 60).count
+    assert_equal 2, OpeningHour.match(Time.parse("1970-01-05 09:00:00"), 15 * 60).count
+    assert_equal 1, OpeningHour.match(Time.parse("1970-01-05 16:50:00"), 15 * 60).count
+  end
+
+  def test_pros_open_scope
+    assert_equal ["Nathalie"], Pro.open(Time.parse("1970-01-05 08:00:00"), 15 * 60).pluck(:name).sort
+    assert_equal ["Nathalie", "Sophie"], Pro.open(Time.parse("1970-01-05 09:00:00"), 15 * 60).pluck(:name).sort
+  end
 end

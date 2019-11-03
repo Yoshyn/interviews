@@ -12,13 +12,20 @@ class OpeningHour < ActiveRecord::Base
   }
   enum day: DAYS_MAPPING
 
-  scope :for_days, -> (days) { where("days & ?", bitwise_for(days)) }
+  scope :for_days, -> (*days) {
+    where("day & ?", bitwise_for(days))
+  }
+
+  scope :match, -> (time, duration) { # Duration in second !
+    dayname, start_hour = time.strftime("%A").downcase, HourType.new.cast(time)
+    for_days(dayname).where("starts_at <= ? AND ends_at >= ?", start_hour, start_hour + duration)
+  }
 
   attribute :starts_at, :hours
   attribute :ends_at, :hours
 
   private
   def self.bitwise_for(days)
-    Array.wrap(days).sum { |day| DAYS_MAPPING[day] }
+    Array.wrap(days).sum { |day| DAYS_MAPPING[day.to_sym] }
   end
 end

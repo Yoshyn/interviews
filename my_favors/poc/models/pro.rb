@@ -7,6 +7,10 @@ class Pro < ActiveRecord::Base
   has_many :opening_hours
   has_many :appointments
 
+  scope :open, -> (time, duration) {
+    joins(:opening_hours).merge(OpeningHour.match(time, duration))
+  }
+
   attribute :name, :string
   attribute :address, :string
   attribute :lat, :float
