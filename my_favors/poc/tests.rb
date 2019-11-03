@@ -98,4 +98,14 @@ class SeedsTest < Minitest::Test
     result = ActiveRecord::Base.connection.execute("SELECT CROW_FLIES_KM(#{paris_lat}, #{paris_lng}, #{rennes_lat}, #{rennes_lng}) AS CROW_FLIES_KM;")
     assert_equal(308, result[0]["CROW_FLIES_KM"].to_i)
   end
+
+
+  def test_pros_not_too_far_from_scope
+    lat, lng = 48.879240, 2.298816
+    assert_equal ["Franck", "Nathalie", "Sophie"], Pro.not_too_far_from(lat, lng).pluck(:name).sort
+    lat, lng = 48.922699, 2.295130
+    assert_equal ["Franck", "Sophie"], Pro.not_too_far_from(lat, lng).pluck(:name).sort
+    lat, lng = 48.825711, 2.273804
+    assert_equal [], Pro.not_too_far_from(lat, lng).pluck(:name).sort
+  end
 end

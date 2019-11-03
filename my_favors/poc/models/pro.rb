@@ -17,6 +17,10 @@ class Pro < ActiveRecord::Base
     joins("INNER JOIN (#{pro_query_ids.join(" INTERSECT ")}) AS ipt ON ipt.relatable_id = pros.id")
   }
 
+  scope :not_too_far_from, -> (lat, lng) {
+    where("CROW_FLIES_KM(pros.lat, pros.lng, ?, ? ) <= pros.max_kilometers", lat, lng)
+  }
+
   scope :open, -> (time, duration) {
     joins(:opening_hours).merge(OpeningHour.match(time, duration))
   }
