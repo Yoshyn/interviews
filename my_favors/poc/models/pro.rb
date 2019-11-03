@@ -14,11 +14,24 @@ class Pro < ActiveRecord::Base
         .joins(:prestation)
         .where(prestations: { reference: reference}).to_sql
     end
-    current_scope.joins("INNER JOIN (#{pro_query_ids.join(" INTERSECT ")}) AS PF ON PF.relatable_id = pros.id")
+    joins("INNER JOIN (#{pro_query_ids.join(" INTERSECT ")}) AS ipt ON ipt.relatable_id = pros.id")
   }
 
   scope :open, -> (time, duration) {
     joins(:opening_hours).merge(OpeningHour.match(time, duration))
+  }
+
+  scope :booked, -> (time) {
+    joins(:appointments).where("? BETWEEN appointments.starts_at AND appointments.ends_at", time)
+  }
+
+  scope :available, -> (time, duration) {
+    joins("
+      INNER JOIN (
+        #{Pro.select(:id).open(time, duration).to_sql}
+        EXCEPT
+        #{Pro.select(:id).booked(time).to_sql}
+      ) AS ipt ON ipt.id = pros.id")
   }
 
   attribute :name, :string

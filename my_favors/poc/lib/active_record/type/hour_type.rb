@@ -2,19 +2,17 @@
 
 class HourType < ActiveRecord::Type::Integer
 
-  SECOND_IN_DAY = (60 * 60 * 24)
-
   def cast(value)
     if value.kind_of?(String)
-      super(Time.parse(value).to_i % SECOND_IN_DAY)
+      super(Time.parse(value).seconds_since_midnight())
     elsif value.kind_of?(Time)
-      super(value.to_i % SECOND_IN_DAY)
+      super(value.seconds_since_midnight())
     else
       super
     end
   end
 
   def deserialize(value)
-    value && Time.at(value).strftime("%H:%M") || cast(value)
+    value && Time.at(value).utc.strftime("%H:%M") || cast(value)
   end
 end

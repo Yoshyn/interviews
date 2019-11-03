@@ -70,6 +70,7 @@ class SeedsTest < Minitest::Test
   def test_pros_open_scope
     assert_equal ["Nathalie"], Pro.open(Time.parse("1970-01-05 08:00:00"), 15 * 60).pluck(:name).sort
     assert_equal ["Nathalie", "Sophie"], Pro.open(Time.parse("1970-01-05 09:00:00"), 15 * 60).pluck(:name).sort
+    assert_equal ["Nathalie", "Sophie"], Pro.open(Time.parse("2019-08-29 10:00:00"), 15 * 60).pluck(:name).sort
   end
 
   def test_pros_for_scope
@@ -78,5 +79,16 @@ class SeedsTest < Minitest::Test
     assert_equal ["Sophie"], Pro.for("woman_color").pluck(:name).sort
     assert_equal ["Franck", "Sophie"], Pro.for("man_haircut", "woman_shampoo").pluck(:name).sort
     assert_equal ["Nathalie"], Pro.for("woman_shampoo", "woman_haircut", "woman_brushing").pluck(:name).sort
+  end
+
+  def test_pros_booked_scope
+    assert_equal ["Nathalie"], Pro.booked(Time.parse("2019-08-27 09:10:00")).pluck(:name).sort
+    assert_equal ["Franck", "Sophie"], Pro.booked(Time.parse("2019-08-28T14:10:00")).pluck(:name).sort
+  end
+
+  def test_pros_available_scope
+    assert_equal ["Nathalie"], Pro.available(Time.parse("2019-08-29 08:01:00"), 15 * 60).pluck(:name).sort
+    assert_equal ["Franck", "Sophie"], Pro.available(Time.parse("2019-08-30 16:00:00"), 15 * 60).pluck(:name).sort
+    assert_equal ["Franck", "Nathalie", "Sophie"], Pro.available(Time.parse("2019-08-30 16:40:00"), 15 * 60).pluck(:name).sort
   end
 end

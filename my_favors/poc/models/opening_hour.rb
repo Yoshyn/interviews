@@ -18,7 +18,7 @@ class OpeningHour < ActiveRecord::Base
 
   scope :match, -> (time, duration) { # Duration in second !
     dayname, start_hour = time.strftime("%A").downcase, HourType.new.cast(time)
-    for_days(dayname).where("starts_at <= ? AND ends_at >= ?", start_hour, start_hour + duration)
+    for_days(dayname).where("opening_hours.starts_at <= ? AND opening_hours.ends_at >= ?", start_hour, start_hour + duration)
   }
 
   attribute :starts_at, :hours
