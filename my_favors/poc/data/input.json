@@ -96,7 +96,7 @@
     {
       "email": "caroline@yopmail.com",
       "name" : "Caroline Dujean",
-      "starts_at" : "2019-08-28T16:00:00+02:00", // cwday
+      "starts_at" : "2019-08-28T16:00:00+02:00",
       "address" : "4 Rue Hoche, 92130 Issy-les-Moulineaux",
       "lat": 48.825711,
       "lng": 2.273804,

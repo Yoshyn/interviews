@@ -20,15 +20,14 @@ seeds["pros"].each do |attrs|
   prestation_reference = attrs.delete("prestations")
   prestations = prestation_reference.map { |reference| Prestation.where(reference: reference).first! }
 
-  opening_hours = attrs.delete("opening_hours")
-  appointments = attrs.delete("appointments")
+  opening_hours, appointments = attrs.delete("opening_hours"), attrs.delete("appointments")
 
   record = Pro.create!(attrs)
   record.prestations = prestations
   opening_hours.each do  |oh_attrs|
-    record.opening_hours << OpeningHour.create!(oh_attrs)
+    OpeningHour.create!(oh_attrs.merge(pro_id: record.id))
   end
   appointments.each do  |ap_attrs|
-    record.appointments << Appointment.create!(ap_attrs)
+    Appointment.create!(ap_attrs.merge(pro_id: record.id))
   end
 end

@@ -8,44 +8,44 @@ ActiveRecord::Base.logger = Logger.new(STDOUT)
 
 ActiveRecord::Schema.define do
   create_table :prestations, force: true do |t|
-    t.string :reference
-    t.integer :duration
+    t.string :reference, null: false
+    t.integer :duration, null: false
   end
 
   create_table :prestationables, force: true do |t|
-    t.references :prestation
-    t.references :relatable, polymorphic: true
+    t.references :prestation, null: false
+    t.references :relatable, polymorphic: true, null: false
   end
 
   create_table :pros, force: true do |t|
-    t.string :name
+    t.string :name, null: false
     t.string :address
-    t.float :lat
-    t.float :lng
-    t.integer :max_kilometers
+    t.float :lat, null: false
+    t.float :lng, null: false
+    t.integer :max_kilometers, null: false, default: 10
   end
 
   create_table :opening_hours, force: true do |t|
-    t.references :pro
-    t.integer :day
-    t.integer :starts_at
-    t.integer :ends_at
+    t.references :pro, null: false
+    t.integer :day, null: false
+    t.integer :starts_at, null: false
+    t.integer :ends_at, null: false
   end
 
   create_table :bookings, force: true do |t|
-    t.string :email
+    t.string :email, null: false
     t.string :name
     t.string :address
-    t.datetime :starts_at
-    t.float :lat
-    t.float :lng
+    t.datetime :starts_at, null: false, default: -> { 'CURRENT_TIMESTAMP' }
+    t.float :lat, null: false
+    t.float :lng, null: false
   end
 
   create_table :appointments, force: true do |t|
-    t.references :pro
+    t.references :pro, null: false
     t.references :booking
-    t.datetime :starts_at
-    t.datetime :ends_at
+    t.datetime :starts_at, null: false
+    t.datetime :ends_at, null: false
   end
 end
 

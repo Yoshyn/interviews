@@ -8,13 +8,20 @@ class Pro < ActiveRecord::Base
   has_many :appointments
 
   # Not supported by sqlite but please consider a materialized view for this in other SGBD !
-  scope :for, -> (*references) {
-    pro_query_ids = Array.wrap(references).map do |reference|
+  scope :for_prestations, -> (*references) {
+    sub_queries_sql = Array.wrap(references).flatten.map do |reference|
       Prestationable.pros.select("relatable_id")
         .joins(:prestation)
         .where(prestations: { reference: reference}).to_sql
     end
-    joins("INNER JOIN (#{pro_query_ids.join(" INTERSECT ")}) AS ipt ON ipt.relatable_id = pros.id")
+    joins("INNER JOIN (#{sub_queries_sql.join(" INTERSECT ")}) AS ipt ON ipt.relatable_id = pros.id").distinct
+  }
+
+  scope :for_prestation_ids, -> (*ids) {
+    sub_queries_sql = Array.wrap(ids).flatten.map do |id|
+      Prestationable.pros.select("relatable_id").where(prestation_id: id).to_sql
+    end
+    joins("INNER JOIN (#{sub_queries_sql.join(" INTERSECT ")}) AS ipt ON ipt.relatable_id = pros.id").distinct
   }
 
   scope :not_too_far_from, -> (lat, lng) {
@@ -29,12 +36,12 @@ class Pro < ActiveRecord::Base
     joins(:appointments).where("? BETWEEN appointments.starts_at AND appointments.ends_at", time)
   }
 
-  scope :available, -> (time, duration) {
+  scope :available_at, -> (time, duration) {
     joins("
       INNER JOIN (
-        #{Pro.select(:id).open(time, duration).to_sql}
+        #{self.select(:id).open(time, duration).to_sql}
         EXCEPT
-        #{Pro.select(:id).booked(time).to_sql}
+        #{self.select(:id).booked(time).to_sql}
       ) AS ipt ON ipt.id = pros.id")
   }
 

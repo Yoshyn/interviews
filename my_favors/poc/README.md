@@ -1,4 +1,48 @@
-# MyFavors - Rails technical test
+# Backend challenge for MyFavors
+
+This is my solution for the following challenge : MyFavors - Rails technical test (see subject bellow).
+
+The goal is to setup a database & a form with rails scaffolding.
+
+You can manipulate the rails model easily with: `bundle exec ruby main.rb`
+
+To run the tests, run: `bundle exec ruby main.rb`
+
+## Additional informations : 
+	
+  * Not finished. Too long for me in the expected time. I focused on the three first questions that are more interesting (IMO) than scaffolding a rails app (last one)
+
+## How to finish :
+  
+  * Generate a rails app and move all the POC code inside the app (~ 40 minutes)
+
+  * Generate scaffolding on models (at least booking & pro. Can be done with active-admin) (~ 30 minutes)
+
+  * Add lot of validations on models (~ 30 minutes)
+
+  * Add lot of conditions like dependent: :destroy on models (~ 30 minutes)
+
+  * Add Indexes into the database (~ 30 minutes)
+
+  * Add Geocodeur gem to transform an address to a lat/lng position (~ 15 minutes)
+
+  * Change sqlite3 to pg and take advantage of build-in geometry (~ 1 hours)
+
+  * Reflect & setup a booking process ( so view) to book your activity (~ 2 hours)
+
+  * ...
+
+
+## Additional questions :
+
+* Is a pro available directly after a reservation ? Quid of the travel time ?
+
+* Managing prestations of a booking with 2 differents pro (this solution is based on the assomption that we search a pro that offers all the prestations).
+
+
+
+
+# Subject
 
 
 
@@ -125,19 +169,3 @@ What we **would love** to see :
 * Your code has to be versioned with Git
 
 * Of course, third party libraries (gem packages) can be used
-
-
-
-## Submission
-
-
-
-Send us a zip version of your code (with `.git` folder included of course !), or push your project on the Git platform of your choice (Github, Bitbucket, whatever) in a private repo and share this repo with us.
-
-
-
-## Candidate questions :
-
-* Is a pro available direclty after a reservation ? Quid of the travel time ?
-
-* Managing prestation of a booking with 2 differents pro

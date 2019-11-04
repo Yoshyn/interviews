@@ -5,12 +5,9 @@ require 'bundler/setup'
 require_relative 'database'
 require_relative 'seeds'
 require "minitest/autorun"
-
 require "pry-byebug"
 
-
 class SeedsTest < Minitest::Test
-
 
   EXPECTED_DATA = JSON.parse(File.read('data/input.json'))
   ASSOC_METHODS = %w(prestations opening_hours appointments)
@@ -73,12 +70,26 @@ class SeedsTest < Minitest::Test
     assert_equal ["Nathalie", "Sophie"], Pro.open(Time.parse("2019-08-29 10:00:00"), 15 * 60).pluck(:name).sort
   end
 
-  def test_pros_for_scope
-    assert_equal ["Franck", "Sophie"], Pro.for("man_haircut").pluck(:name).sort
-    assert_equal ["Franck", "Nathalie", "Sophie"], Pro.for("woman_shampoo").pluck(:name).sort
-    assert_equal ["Sophie"], Pro.for("woman_color").pluck(:name).sort
-    assert_equal ["Franck", "Sophie"], Pro.for("man_haircut", "woman_shampoo").pluck(:name).sort
-    assert_equal ["Nathalie"], Pro.for("woman_shampoo", "woman_haircut", "woman_brushing").pluck(:name).sort
+  def test_pros_for_prestations_scope
+    assert_equal ["Franck", "Sophie"], Pro.for_prestations("man_haircut").pluck(:name).sort
+    assert_equal ["Franck", "Nathalie", "Sophie"], Pro.for_prestations("woman_shampoo").pluck(:name).sort
+    assert_equal ["Sophie"], Pro.for_prestations("woman_color").pluck(:name).sort
+    assert_equal ["Franck", "Sophie"], Pro.for_prestations("man_haircut", "woman_shampoo").pluck(:name).sort
+    assert_equal ["Nathalie"], Pro.for_prestations("woman_shampoo", "woman_haircut", "woman_brushing").pluck(:name).sort
+  end
+
+  def test_pros_for_prestation_ids_scope
+    prestation = Prestation.where(reference: "man_haircut").first!
+    assert_equal ["Franck", "Sophie"], Pro.for_prestation_ids(prestation.id).pluck(:name).sort
+    assert_equal ["Franck", "Sophie"], Pro.for_prestation_ids(prestation.id).pluck(:name).sort
+    prestation = Prestation.where(reference: "woman_shampoo").first!
+    assert_equal ["Franck", "Nathalie", "Sophie"], Pro.for_prestation_ids(prestation.id).pluck(:name).sort
+    prestation = Prestation.where(reference: "woman_color").first!
+    assert_equal ["Sophie"], Pro.for_prestation_ids(prestation.id).pluck(:name).sort
+    prestation_ids = Prestation.where(reference: ["man_haircut", "woman_shampoo"]).pluck(:id)
+    assert_equal ["Franck", "Sophie"], Pro.for_prestation_ids(*prestation_ids).pluck(:name).sort
+    prestation_ids = Prestation.where(reference: ["woman_shampoo", "woman_haircut", "woman_brushing"]).pluck(:id)
+    assert_equal ["Nathalie"], Pro.for_prestation_ids(*prestation_ids).pluck(:name).sort
   end
 
   def test_pros_booked_scope
@@ -86,10 +97,10 @@ class SeedsTest < Minitest::Test
     assert_equal ["Franck", "Sophie"], Pro.booked(Time.parse("2019-08-28T14:10:00")).pluck(:name).sort
   end
 
-  def test_pros_available_scope
-    assert_equal ["Nathalie"], Pro.available(Time.parse("2019-08-29 08:01:00"), 15 * 60).pluck(:name).sort
-    assert_equal ["Franck", "Sophie"], Pro.available(Time.parse("2019-08-30 16:00:00"), 15 * 60).pluck(:name).sort
-    assert_equal ["Franck", "Nathalie", "Sophie"], Pro.available(Time.parse("2019-08-30 16:40:00"), 15 * 60).pluck(:name).sort
+  def test_pros_available_at_scope
+    assert_equal ["Nathalie"], Pro.available_at(Time.parse("2019-08-29 08:01:00"), 15 * 60).pluck(:name).sort
+    assert_equal ["Franck", "Sophie"], Pro.available_at(Time.parse("2019-08-30 16:00:00"), 15 * 60).pluck(:name).sort
+    assert_equal ["Franck", "Nathalie", "Sophie"], Pro.available_at(Time.parse("2019-08-30 16:40:00"), 15 * 60).pluck(:name).sort
   end
 
   def test_crow_flies_km_sql_result
@@ -99,7 +110,6 @@ class SeedsTest < Minitest::Test
     assert_equal(308, result[0]["CROW_FLIES_KM"].to_i)
   end
 
-
   def test_pros_not_too_far_from_scope
     lat, lng = 48.879240, 2.298816
     assert_equal ["Franck", "Nathalie", "Sophie"], Pro.not_too_far_from(lat, lng).pluck(:name).sort
@@ -107,5 +117,40 @@ class SeedsTest < Minitest::Test
     assert_equal ["Franck", "Sophie"], Pro.not_too_far_from(lat, lng).pluck(:name).sort
     lat, lng = 48.825711, 2.273804
     assert_equal [], Pro.not_too_far_from(lat, lng).pluck(:name).sort
+  end
+
+  def test_booking_available_pros_method
+    Booking.all.each do |booking| # Aucun ne match dans la base
+      assert_equal 0, booking.available_pros.count
+    end
+
+    booking = Booking.create!(
+      email: "_@test.com",
+      starts_at: "2019-08-27T14:00:00+02:00",
+      lat: 48.922699, lng: 2.295130)
+    booking.prestations = Prestation.where(reference: "woman_haircut")
+    assert_equal ["Franck", "Sophie"], booking.available_pros.pluck(:name).sort
+    booking.prestations = Prestation.where(reference: ["woman_haircut", "woman_color"])
+    assert_equal ["Sophie"], booking.available_pros.pluck(:name).sort
+    booking.destroy
+  end
+
+  def test_fonctionnal # Same that in main.rb
+    app_count = Appointment.count
+    booking = Booking.create!(
+      email: "sylvestre@fake.com",
+      starts_at: "2019-08-27T14:00:00+02:00",
+      lat: 48.922699, lng: 2.295130)
+    booking.prestations = Prestation.where(reference: "man_haircut")
+    assert_equal ["Franck", "Sophie"], booking.available_pros.pluck(:name).sort
+    pro_id = booking.available_pros.first.id
+    booking.create_appointement_with(pro_id)
+    assert_equal app_count + 1, Appointment.count
+
+    # Only one appointment per booking. For the moment.
+    assert_raises("Booking::AppointmentAlreadyExist") { booking.create_appointement_with(1234567) }
+
+    assert_equal ["Franck"], booking.available_pros.pluck(:name).sort
+    booking.destroy
   end
 end
