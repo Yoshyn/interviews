@@ -9,19 +9,29 @@ class Pro < ActiveRecord::Base
 
   # Not supported by sqlite but please consider a materialized view for this in other SGBD !
   scope :for_prestations, -> (*references) {
-    sub_queries_sql = Array.wrap(references).flatten.map do |reference|
-      Prestationable.pros.select("relatable_id")
+    if (list = Array.wrap(references)).many?
+      sub_query_sql = Prestationable.pros.select("relatable_id")
         .joins(:prestation)
-        .where(prestations: { reference: reference}).to_sql
+        .where(prestations: { reference: list})
+        .group(:relatable_id).having("COUNT(distinct reference) = ?", list.count)
+        .to_sql
+      joins("INNER JOIN (#{sub_query_sql}) AS ipt ON ipt.relatable_id = pros.id").distinct
+    else
+      joins(:prestations).where(prestations: { reference: list})
     end
-    joins("INNER JOIN (#{sub_queries_sql.join(" INTERSECT ")}) AS ipt ON ipt.relatable_id = pros.id").distinct
   }
 
   scope :for_prestation_ids, -> (*ids) {
-    sub_queries_sql = Array.wrap(ids).flatten.map do |id|
-      Prestationable.pros.select("relatable_id").where(prestation_id: id).to_sql
+    list = Array.wrap(ids).flatten
+    if list.many?
+      sub_query_sql = Prestationable.pros.select("relatable_id")
+        .where(prestation_id: ids)
+        .group(:relatable_id).having("COUNT(relatable_id) = ?", list.count)
+        .to_sql
+      joins("INNER JOIN (#{sub_query_sql}) AS ipt ON ipt.relatable_id = pros.id").distinct
+    else
+      joins(:prestations).where(prestations: { id: list})
     end
-    joins("INNER JOIN (#{sub_queries_sql.join(" INTERSECT ")}) AS ipt ON ipt.relatable_id = pros.id").distinct
   }
 
   scope :not_too_far_from, -> (lat, lng) {
@@ -39,9 +49,9 @@ class Pro < ActiveRecord::Base
   scope :available_at, -> (time, duration) {
     joins("
       INNER JOIN (
-        #{self.select(:id).open(time, duration).to_sql}
+        #{Pro.unscoped.select(:id).open(time, duration).to_sql}
         EXCEPT
-        #{self.select(:id).booked(time).to_sql}
+        #{Pro.unscoped.select(:id).booked(time).to_sql}
       ) AS ipt ON ipt.id = pros.id")
   }
 
