@@ -1,10 +1,13 @@
+# frozen_string_literal: true
+
 require "active_record"
 require 'active_support/concern'
+require 'active_support/all'
 
-module ActiveRecord::JsonableScope
+module ActiveRecord::FormatableScope
   extend ActiveSupport::Concern
   class_methods do
-    def jsonable_scope(options = {})
+    def formatable_scope(options = {})
       define_singleton_method(:scoping_as_json) do |opts = {}|
         records = (current_scope || all).map do |record|
           as_json_parameters = options.merge(opts)
@@ -15,14 +18,21 @@ module ActiveRecord::JsonableScope
           end
           record_as_json
         end
-        { table_name => records }
       end
 
       define_singleton_method(:scoping_to_json) do |opts = {}|
-        scoping_as_json(opts).to_json
+        root, list = opts.delete(:root), scoping_as_json(opts)
+        root_value = (root.is_a?(TrueClass) && table_name) || root.presence
+        (root ? { root_value => list } : list).to_json
+      end
+
+      define_singleton_method(:scoping_to_xml) do |opts = {}|
+        root, list = opts.delete(:root), scoping_as_json(opts)
+        root_value = (root.is_a?(TrueClass) && table_name) || root.presence
+        list.to_xml(root: root_value)
       end
     end
   end
 end
 
-ActiveRecord::Base.send(:include, ActiveRecord::JsonableScope)
+ActiveRecord::Base.send(:include, ActiveRecord::FormatableScope)

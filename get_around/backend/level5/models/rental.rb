@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 require "active_record"
 
-require_relative '../lib/extensions/active_record/jsonable_scope'
+require_relative '../lib/extensions/active_record/formatable_scope'
 require_relative "../services/actors"
 
 class Rental < ActiveRecord::Base
 
-  jsonable_scope(only: :id, methods: [:actions, :option_types] )
+  formatable_scope(only: :id, methods: [:actions, :option_types] )
 
   belongs_to :car
   has_many :options

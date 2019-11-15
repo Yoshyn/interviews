@@ -27,11 +27,11 @@ class RentalPriceTest < Minitest::Test
 
   def test_expected_output
     alpha_sort = -> (string) { string.chars.sort.join }
-    assert_equal EXPECTED_JSON, Rental.scoping_as_json(aliases: { "option_types" => "options" })
+    assert_equal EXPECTED_JSON["rentals"], Rental.scoping_as_json(aliases: { "option_types" => "options" })
     assert_equal(
-      alpha_sort.call(EXPECTED_RAW),
+      alpha_sort.call(EXPECTED_RAW).strip,
       alpha_sort.call(
-        Rental.scoping_to_json(aliases: { "option_types" => "options" })
+        Rental.scoping_to_json(aliases: { "option_types" => "options" }, root: true)
       )
     )
   end
