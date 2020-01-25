@@ -1,0 +1,15 @@
+Architecture
+
+1. Une entreprise veut créer un système de notification pour son site.
+
+Chaque type de notification a besoin de 'variables' différentes:
+(x a aimé le projet de y, le projet x vient d'être mis à jour, etc.)
+La base de données est en PostgreSQL.
+Décrivez une structure de données et une implémentation en back-end qui permettrait d'être assez flexible
+tout en réduisant la possibilité de bugs et de structures non conformes.
+
+>
+
+2. Décrivez les objets et la structure de donnée que vous utiliseriez pour implémenter un jeu de Touché-Coulé
+
+>
