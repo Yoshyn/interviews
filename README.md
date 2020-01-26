@@ -27,6 +27,8 @@
 | [Lanaf](https://github.com/Yoshyn/interviews/tree/master/lanaf)        | renamed     | Nice school algo.          |
 | [MyFavors](https://github.com/Yoshyn/interviews/tree/master/my_favors/poc)     | renamed     | interesting but too long   |
 | [Odnetnin](https://github.com/Yoshyn/interviews/tree/master/odnetnin)     | transformed | Nice school algo.          |
+| [Skello](https://github.com/Yoshyn/interviews/tree/master/skello)     | no | schoollar questions.          |
+
 
 ## Usage
 

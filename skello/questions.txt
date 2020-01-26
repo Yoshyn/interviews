@@ -2,14 +2,32 @@ Architecture
 
 1. Une entreprise veut créer un système de notification pour son site.
 
-Chaque type de notification a besoin de 'variables' différentes:
+Chaque type de notification a besoin de 'variables' différentes :
 (x a aimé le projet de y, le projet x vient d'être mis à jour, etc.)
 La base de données est en PostgreSQL.
-Décrivez une structure de données et une implémentation en back-end qui permettrait d'être assez flexible
-tout en réduisant la possibilité de bugs et de structures non conformes.
+Décrivez une structure de données et une implémentation en back-end qui permettrait d'être assez flexible tout en réduisant la possibilité de bugs et de structures non conformes.
 
->
+2. Décrivez les objets et la structure de données que vous utiliseriez pour implémenter un jeu de Touché-Coulé
 
-2. Décrivez les objets et la structure de donnée que vous utiliseriez pour implémenter un jeu de Touché-Coulé
+----------------------------------------
+Mes Réponses :
 
->
+1. Un système de notification permet d'envoyer/notifier (email, sms, push mobile, flash messages...) des informations à des utilisateurs et se base souvent sur un couple de 'message broker' (ex : redis, rabbitmq) & job scheduler (ex : sidekiq).
+Comme cela ne semble pas être la description du besoin (stockage de like, de date de mise à jour..), je demande à clarifier le besoin avant de prévoir une structure de données. A moins qu'il ne s'agisse d'un système d'évènements.
+
+Pour répondre (quand même) à la question :
+
+Sur Postgres, une table 'notifications' avec :
+    * un champ 'type' en string (le type de la notification)
+    * un champ 'template' en text (le message de la notification)
+    * un champ 'variables' en JSONB
+
+Coté Back : Une single table inheritance (https://api.rubyonrails.org/classes/ActiveRecord/Inheritance.html) avec une gem du type 'activerecord-typedstore' (https://github.com/byroot/activerecord-typedstore) qui définit la structure des variables pour chaque sous-classe et un rendering correspondant au template.
+
+2. Dans les jeux vidéo, il y a trois parties vraiment compliquées :
+    * Le moteur physique (calcul de géométrie)
+    * Le moteur graphique
+    * La gestion réseau
+
+Dans notre cas, on ne s'intéresse à aucune de ces parties. Juste à la structure aux données permettant l'implémentation d'un jeu.
+Comme le jeu est un sujet 'scolaire' classique, je ne réinventerais pas la roue et reprendrais une structure déjà existante répondant au besoin. Un exemple : https://chamilo.univ-grenoble-alpes.fr/courses/IUT1RT1M2109/document/1819-Bataille-Navale/html/principe.html#modele-de-donnees
