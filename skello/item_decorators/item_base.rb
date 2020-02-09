@@ -19,6 +19,7 @@ module ItemDecorators
       nq = new_quality
       nq = QUALITY_MAX if nq > QUALITY_MAX
       nq = QUALITY_MIM if nq < QUALITY_MIN
+      # nq.clamp(QUALITY_MIM, QUALITY_MAX) # See : https://ruby-doc.org/core-2.7.0/Comparable.html#method-i-clamp
       @item.quality = nq
     end
 
